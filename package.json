@@ -1,5 +1,5 @@
 {
-  "name": "nodeTest",
+  "name": "nodetest",
   "version": "1.0.0",
   "description": "test node.js functionality",
   "main": "server.js",
@@ -8,8 +8,8 @@
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Dan Rusu",
+  "license": "GPL-3.0",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
@@ -23,5 +23,6 @@
   "bugs": {
     "url": "https://github.com/danrusu/nodeTest/issues"
   },
-  "homepage": "https://github.com/danrusu/nodeTest#readme"
+  "homepage": "https://github.com/danrusu/nodeTest#readme",
+  "devDependencies": {}
 }

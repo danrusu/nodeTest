@@ -46,14 +46,14 @@
 
 
         function getMessage(){
-            $.get('http://localhost:3000/messages', (data) => {
+            $.get('http://10.56.1.57:3000/messages', (data) => {
                 data.forEach(addMessage);
             })
         }
 
 
         function postMessages(message){
-            $.post('http://localhost:3000/messages', message)
+            $.post('http://10.56.1.57:3000/messages', message)
         }
     </script>
 </div>
