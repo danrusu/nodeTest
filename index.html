@@ -19,25 +19,18 @@
 
     <script>
 
-       var socket = io()
+      $( () => {
 
-        $( () =>{
-            $('#send').click( () => {
-                var message = {name: $('#name').val(), message: $('#message').val()}
-                postMessages(message)
-            })
-            getMessage()
-            
-        })
+      
+       var socket = io();
 
+       socket.on('update', update);
 
-        socket.on('message', addMessage)
+       function addMessage(message){
+         $('#messages').append(`<h4> ${message.name} </h4> <p> ${message.message} </p>`)
+       }
 
-        function addMessage(message){
-            $('#messages').append(`<h4> ${message.name} </h4> <p> ${message.message} </p>`)
-        }
-
-
+      }
     </script>
 </body>
 
