@@ -1,60 +1,87 @@
+const chromeLauncher = require('chrome-launcher');
+
 const puppeteer = require('puppeteer');
 
 const lighthouse = require('lighthouse');
-const chromeLauncher = require('chrome-launcher');
 
-const fs = require('fs');
+
 const request = require('request-promise');
 
-async function launchChromeAndRunLighthouse(startingUrl, port, loginFunction){
+const fs = require('fs');
 
-  // 1. Launch Chrome
-  const chrome = await chromeLauncher.launch( 
+
+
+async function launchChrome(url, debuggingPort, config={}){
+
+  return await chromeLauncher.launch( 
     { 
+      startingUrl: url,
+
       // Chrome debugging port 
       // Equivalent to "chrome.exe --remote-debugging-port=9222"
-      port: port,
+      port: debuggingPort,
 
       enableExtensions: true,
-
-      startingUrl: startingUrl,
       
-      chromePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe' 
-    } 
+      chromePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+      
+      // add/overwrite configuration settings
+      ...config
+    }     
   );
+}
 
-  console.log(`1. Started browser with debugging port: ${chrome.port}`);
-  
 
-  // 2. Get WebSocket Url for puppeteer browser from
-  // http://localhost:9222/json/version  
+
+async function getWebSocketDebuggerUrl(debuggingPort){
+
   const webSocketInfo = await request(
-    `http://localhost:${chrome.port}/json/version`, 
+    `http://localhost:${debuggingPort}/json/version`, 
     response => response
   );
 
   //console.log('Response ', JSON.parse(webSocketInfo));
   const { webSocketDebuggerUrl } = JSON.parse(webSocketInfo);
+
+  return webSocketDebuggerUrl;
+}
+
+
+
+async function lhrReport(
+  startingUrl, 
+  debuggingPort, 
+  loginFunction = ()=>console.log('blank loginFunction')){
+
+  // 1. Launch Chrome
+  const chrome = await launchChrome(startingUrl, debuggingPort);
+  console.log(`1. Started browser with debugging port: ${chrome.port}`);
+  
+
+  // 2. Get WebSocket Url for puppeteer browser from
+  // http://localhost:9222/json/version    
+  const webSocketDebuggerUrl = await getWebSocketDebuggerUrl(chrome.port);
   console.log(`2. Get webSocketDebuggerUrl: ${webSocketDebuggerUrl}`);
 
-
-  // 3. Launch puppeteer for existing browser (web socket endpoint)
-  console.log('3. Connect puppeteer to webSocketDebuggerUrl');
   
+  // 3. Launch puppeteer for existing browser (web socket endpoint)
   const browser = await puppeteer.connect(
     {
       browserWSEndpoint: webSocketDebuggerUrl,
     }
   );
+  console.log('3. Connected puppeteer to webSocketDebuggerUrl');
+
 
   // 4. Execute UI actions in browser via puppeteer
   const page = (await browser.pages())[0];
 
+  console.log('4. Call loginFunction(page)');
   await loginFunction(page);   
 
+  
   // 5. Run lighthouse audit on browser debugging port
-  console.log('5. Run lighthouse audit');
-
+  console.log('5. Run lighthouse audit ...');
   const lhr = await lighthouse(
     'http://www.yahoo.com', 
     { 
@@ -67,7 +94,7 @@ async function launchChromeAndRunLighthouse(startingUrl, port, loginFunction){
   console.log(`Lighthouse score: ${lhr.score}`);
   
   // The gathered artifacts are typically removed as they can be quite large (~50MB+)
-  //delete lhr.artifacts;
+  delete lhr.artifacts;
 
   await browser.disconnect();
   
@@ -104,14 +131,13 @@ async function aoiLogin(page){
 
 
 
-// ###### MAIN #####
+// ##### MAIN #####
 (async () => {
   
-  //const report = await launchChromeAndRunLighthouse('https://watt.azets.com');
-  const lhr = await launchChromeAndRunLighthouse(
+  //const report = await lhrReport('https://watt.azets.com');
+  const lhr = await lhrReport(
     'http://www.yahoo.com', 
-    9222,
-    page => console.log('4. Call loginFunction(page)')
+    9222
   );
   
 
@@ -119,7 +145,8 @@ async function aoiLogin(page){
     './report.json', 
     JSON.stringify(lhr), 
     'utf8', 
-    err => console.log(err) );
+    err => console.log(err) 
+  );
 
   //return JSON.stringify(report);  
   //console.log(report);
