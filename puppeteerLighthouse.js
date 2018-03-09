@@ -1,3 +1,4 @@
+// ##### Dependencies
 const chromeLauncher = require('chrome-launcher');
 
 const puppeteer = require('puppeteer');
@@ -15,6 +16,9 @@ async function launchChrome(url, debuggingPort, config={}){
 
   return await chromeLauncher.launch( 
     { 
+      // default
+      // headless: false
+
       startingUrl: url,
 
       // Chrome debugging port 
@@ -23,13 +27,14 @@ async function launchChrome(url, debuggingPort, config={}){
 
       enableExtensions: true,
       
-      chromePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+      // default: Chronium - always updated by npm and compatible with Dev Tools Protocol
+      // chromePath: 'C:\\node\\nodeTest\\node_modules\\puppeteer\\.local-chromium\\win64-536395\\chrome-win32\\chrome.exe'
       
       // add/overwrite configuration settings
       ...config
     }     
   );
-}
+};
 
 
 
@@ -44,17 +49,24 @@ async function getWebSocketDebuggerUrl(debuggingPort){
   const { webSocketDebuggerUrl } = JSON.parse(webSocketInfo);
 
   return webSocketDebuggerUrl;
-}
+};
 
 
 
 async function lhrReport(
   startingUrl, 
   debuggingPort, 
+  chromePath,
   loginFunction = ()=>console.log('blank loginFunction')){
 
   // 1. Launch Chrome
-  const chrome = await launchChrome(startingUrl, debuggingPort);
+  const chrome = await launchChrome(
+    startingUrl, 
+    debuggingPort,
+    {
+      chromePath: chromePath
+    }
+  );
   console.log(`1. Started browser with debugging port: ${chrome.port}`);
   
 
@@ -75,15 +87,15 @@ async function lhrReport(
 
   // 4. Execute UI actions in browser via puppeteer
   const page = (await browser.pages())[0];
-
+  
   console.log('4. Call loginFunction(page)');
   await loginFunction(page);   
 
   
   // 5. Run lighthouse audit on browser debugging port
-  console.log('5. Run lighthouse audit ...');
+  console.log(`5. Run lighthouse audit on ${startingUrl} ...`);
   const lhr = await lighthouse(
-    'http://www.yahoo.com', 
+    startingUrl, 
     { 
       port: chrome.port,
       output: 'json' 
@@ -107,37 +119,19 @@ async function lhrReport(
 
 
 
-async function aoiLogin(page){
-
-  // ***** Sign in *****
-  await page.focus('#username');
-  await page.keyboard.type('dan');
-
-  
-  await page.click("#signInButton");
-  // ***** end Sign in *****
-
-
-  await page.waitForSelector('#wattRedirect');
-  
-  await page.screenshot(
-    {
-      path: 'screenshot.png',
-      fullPage: true
-    }
-  );
-
-};
-
-
-
 // ##### MAIN #####
 (async () => {
   
   //const report = await lhrReport('https://watt.azets.com');
   const lhr = await lhrReport(
+
     'http://www.yahoo.com', 
-    9222
+    
+    9222,
+    
+    {
+      chromePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    }
   );
   
 

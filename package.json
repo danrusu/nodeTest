@@ -1,24 +1,21 @@
 {
-  "name": "nodetest",
+  "name": "puppeteerTest",
   "version": "1.0.0",
-  "description": "test node.js functionality",
-  "main": "puppeteerLighthouse.js",
+  "description": "Test Chrome Dev Tools Protocol: puppeteer, lighthouse.",
+  "main": "aoiLogin.js",
   "scripts": {
     "test": "jasmine",
-    "start": "node server.js"
+    "start": "node aoiLogin.js"
   },
   "keywords": [],
   "author": "Dan Rusu",
   "license": "GPL-3.0",
   "dependencies": {
-    "body-parser": "^1.18.2",
-    "express": "^4.16.2",
-    "mongoose": "^5.0.9",
     "puppeteer": "^1.1.1",
     "puppeteer-lighthouse": "^0.1.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
-    "socket.io": "^2.0.4"
+    "socketio": "^1.0.0"
   },
   "repository": {
     "type": "git",
