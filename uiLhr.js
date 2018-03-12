@@ -94,9 +94,10 @@ async function lhrReport(
   );
   console.log('3. Connected puppeteer to webSocketDebuggerUrl');
 
-
+  // wait for page to have an url
   const page = (await browser.pages())[0];
   const urlTimeout = 10000;
+  
   await Promise.race(
     [
       page.waitForNavigation({ urlTimeout, waitUntil: 'load' }),
@@ -149,6 +150,9 @@ async function lhrReport(
 (async () => {
 
   const url = process.argv[2];
+  if (! url){
+    throw new Error('Url not specified!\nUsage: node uiLhr.js url [uiActions.js]')
+  }
   const uiActionsScript = process.argv[3];
   
   let uiActions;
@@ -181,4 +185,5 @@ async function lhrReport(
   //return JSON.stringify(lhr);  
   //console.log(lhr);
 
-})();
+})()
+.catch(err => console.log(err.message));
