@@ -20,7 +20,7 @@
 
 #### Usage
 
-git clone https://github.com/danrusu/ui_lhr.git
+    git clone https://github.com/danrusu/ui_lhr.git
 
     cd ui_lhr
 
