@@ -1,6 +1,6 @@
 # UI Lighthouse Report 
 
-### This is a npm module for creating a Lighthouse reports for web applications based on Chrome Dev Tools Protocol.
+### This is a npm module for creating Lighthouse reports for web applications based on Chrome Dev Tools Protocol.
 
 
 #### Dependencies
