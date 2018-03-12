@@ -26,7 +26,7 @@
 
     npm install
 
-    node ./uiLhr.js url [uiActions.js]
+    node uiLhr.js url [uiActions.js]
 
 
 #### Main steps
