@@ -1,11 +1,11 @@
 {
-  "name": "puppeteerTest",
+  "name": "ui_lhr",
   "version": "1.0.0",
   "description": "Test Chrome Dev Tools Protocol: puppeteer, lighthouse.",
-  "main": "aoiLogin.js",
+  "main": "uiLhr.js",
   "scripts": {
     "test": "jasmine",
-    "start": "node aoiLogin.js"
+    "start": "node uiLhr.js"
   },
   "keywords": [],
   "author": "Dan Rusu",
