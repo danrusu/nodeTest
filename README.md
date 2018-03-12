@@ -31,7 +31,9 @@ git clone https://github.com/danrusu/ui_lhr.git
 
 1. Open Chrome and navigate to the url (sets a debugging port for Chrome) . 
 
-2. If an ui actions script is provided then perform actions described in it via Puppeteer. The main goal for the ui actions is to automate web apps authentication. This could change the final url for the lighthouse test.
+2. If an ui actions script is provided then perform actions described in it via Puppeteer. 
+The main goal for the ui actions is to automate web apps authentication. 
+This could change the final url for the lighthouse test.
 
 3. Create a lighthouse report (.json) for the final url.
 
