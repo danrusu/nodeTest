@@ -20,11 +20,11 @@
 
 git clone https://github.com/danrusu/ui_lhr.git
 
-cd ui_lhr
+    cd ui_lhr
 
-npm install
+    npm install
 
-node ./uiLhr.js url [uiActions.js]
+    node ./uiLhr.js url [uiActions.js]
 
 
 #### Main steps
