@@ -12,11 +12,9 @@ const request = require('request-promise');
 
 const fs = require('fs');
 
-const {promisify} = require('util');
+const { promisify } = require('util');
 
-const readFileAsync = promisify(fs.readFile);
-
-const writeFileAsync = promisify(fs.writeFile);
+const [ readFileAsync, writeFileAsync ] = [ fs.readFile, fs.writeFile ].map(promisify);
 
 
 
@@ -150,15 +148,32 @@ async function lhrReport(
 
 
 
+async function usage(args){
+
+  const configTemplate = await readFileAsync('.\\config_template.json', 'utf8');
+
+  // get run configuration from first parameter
+  const usageError = '\nConfig file not specified!'
+    + '\n\nUsage: node uiLhr.js config.json'
+    + '\n\ne.g. config.json:\n'
+    + configTemplate;
+
+  const configPath = args[2];
+  if (! configPath){
+    
+    throw new Error(usageError);
+  }
+
+  return configPath;
+}
+
+
+
 // ##### MAIN #####
 (async () => {
 
-  // get run configuration from first parameter
-  const configPath = process.argv[2];
-  if (! configPath){
-    throw new Error('Config file not specified!\nUsage: node uiLhr.js config.json')
-  }
-   
+  const configPath = await usage(process.argv);
+  
   const config = JSON.parse(
     await readFileAsync(
       configPath, 
@@ -184,26 +199,32 @@ async function lhrReport(
     uiActions
   );
   
-  // generate HTML report
-  const lhrHtml = new ReportGenerator().generateReportHtml(lhr); 
-
-  // save both JSON and HTML reports
-  await writeFileAsync(
-    config.lhrPath, 
-    JSON.stringify(lhr), 
-    'utf8' 
-  );
-
-  await writeFileAsync(
-    config.lhrHtmlPath, 
-    lhrHtml, 
-    'utf8' 
-  );
-
-
-  console.log(` score: ${lhr.score}`);
   
-  console.log(` reports: ${config.lhrPath}, ${config.lhrHtmlPath}`);
+  console.log(` score: ${lhr.score}`);
+
+
+  // REPORTS
+  if (config.lhrPath){
+    // save JSON report
+    await writeFileAsync(
+      config.lhrPath, 
+      JSON.stringify(lhr), 
+      'utf8' 
+    );
+    console.log(`JSON report: ${config.lhrPath}`);
+  }
+
+
+  if(config.lhrHtmlPath){
+    // save HTML report
+    const lhrHtml = new ReportGenerator().generateReportHtml(lhr);
+    await writeFileAsync(
+      config.lhrHtmlPath, 
+      lhrHtml, 
+      'utf8' 
+    );
+    console.log(`HTML report: ${config.lhrHtmlPath}`);
+  }
 
 })()
 .catch(err => console.log(err.message));

@@ -33,22 +33,12 @@
     e.g.
 
     {
-
-       "chromePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-
-       "debuggingPort": "9222",
-
-
-       "url": "https://www.yahoo.com/user/login/", 
-
-       
-       "uiActionsScript": "C:\\node\\ui_lhr\\yahooPOM.js",
-
-
-       "lhrPath": ".\\lhr.json",
-
-       "lhrHtmlPath": ".\\lhr.html"
-
+      "chromePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+      "debuggingPort": "9222",
+      "url": "https://www.yahoo.com",
+      "uiActionsScript": "C:\\node\\ui_lhr\\yahooPOM.js",
+      "lhrPath": ".\\lhr.json",
+      "lhrHtmlPath": ".\\lhr.html"
     }
 
 
