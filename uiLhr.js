@@ -5,10 +5,18 @@ const puppeteer = require('puppeteer');
 
 const lighthouse = require('lighthouse');
 
+const ReportGenerator = require('lighthouse/lighthouse-core/report/v2/report-generator');
+
 
 const request = require('request-promise');
 
 const fs = require('fs');
+
+const {promisify} = require('util');
+
+const readFileAsync = promisify(fs.readFile);
+
+const writeFileAsync = promisify(fs.writeFile);
 
 
 
@@ -145,55 +153,57 @@ async function lhrReport(
 // ##### MAIN #####
 (async () => {
 
-  const url = process.argv[2];
-  if (! url){
-    throw new Error('Url not specified!\nUsage: node uiLhr.js url [uiActions.js]')
+  // get run configuration from first parameter
+  const configPath = process.argv[2];
+  if (! configPath){
+    throw new Error('Config file not specified!\nUsage: node uiLhr.js config.json')
   }
-  const uiActionsScript = process.argv[3];
+   
+  const config = JSON.parse(
+    await readFileAsync(
+      configPath, 
+      'utf8'
+    )
+  );
+
   
   let uiActions;
-  if (uiActionsScript){
-    uiActions = require(uiActionsScript).uiActions;
+  if (config.uiActionsScript){
+    uiActions = require(config.uiActionsScript).uiActions;
   }
-
-  const lhrPath = './lhr.json';
-  const lhrHtmlPath = './lhr.html';
 
   //TODO - read lhrReport params to JSON file
   const lhr = await lhrReport(
 
-    url, 
+    config.url, 
 
-    9222,
+    config.debuggingPort,
 
-    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    config.chromePath,
 
     uiActions
   );
   
   // generate HTML report
-  const ReportGenerator = require('lighthouse/lighthouse-core/report/v2/report-generator');
   const lhrHtml = new ReportGenerator().generateReportHtml(lhr); 
 
   // save both JSON and HTML reports
-  await fs.writeFile(
-    lhrPath, 
+  await writeFileAsync(
+    config.lhrPath, 
     JSON.stringify(lhr), 
-    'utf8', 
-    err => { if (err) console.log(err) }  
+    'utf8' 
   );
 
-  await fs.writeFile(
-    lhrHtmlPath, 
+  await writeFileAsync(
+    config.lhrHtmlPath, 
     lhrHtml, 
-    'utf8', 
-    err => { if (err) console.log(err) } 
+    'utf8' 
   );
 
 
   console.log(` score: ${lhr.score}`);
   
-  console.log(' reports: lhr.json, lhr.html');
+  console.log(` reports: ${config.lhrPath}, ${config.lhrHtmlPath}`);
 
 })()
 .catch(err => console.log(err.message));

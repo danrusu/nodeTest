@@ -26,7 +26,30 @@
 
     npm install
 
-    node uiLhr.js url [uiActions.js]
+    node uiLhr.js config.json
+
+#### config.json
+    
+    e.g.
+
+    {
+
+       "chromePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+
+       "debuggingPort": "9222",
+
+
+       "url": "https://www.yahoo.com/user/login/", 
+
+       
+       "uiActionsScript": "C:\\node\\ui_lhr\\yahooPOM.js",
+
+
+       "lhrPath": ".\\lhr.json",
+
+       "lhrHtmlPath": ".\\lhr.html"
+
+    }
 
 
 #### Main steps
