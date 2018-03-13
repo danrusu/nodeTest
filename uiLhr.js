@@ -130,16 +130,12 @@ async function lhrReport(
     null
   );
     
-  console.log(` score: ${lhr.score}`);
-  
   // The gathered artifacts are typically removed as they can be quite large (~50MB+)
   delete lhr.artifacts;
 
   await browser.disconnect();
   
   await chrome.kill();
-
-  console.log(' report: report.json');
 
   return lhr;
 };
@@ -160,7 +156,8 @@ async function lhrReport(
     uiActions = require(uiActionsScript).uiActions;
   }
 
-  const lhrReportPath = './report.json';
+  const lhrPath = './lhr.json';
+  const lhrHtmlPath = './lhr.html';
 
   //TODO - read lhrReport params to JSON file
   const lhr = await lhrReport(
@@ -174,16 +171,29 @@ async function lhrReport(
     uiActions
   );
   
+  // generate HTML report
+  const ReportGenerator = require('lighthouse/lighthouse-core/report/v2/report-generator');
+  const lhrHtml = new ReportGenerator().generateReportHtml(lhr); 
 
+  // save both JSON and HTML reports
   await fs.writeFile(
-    lhrReportPath, 
+    lhrPath, 
     JSON.stringify(lhr), 
     'utf8', 
-    err => console.log(err) 
+    err => { if (err) console.log(err) }  
   );
 
-  //return JSON.stringify(lhr);  
-  //console.log(lhr);
+  await fs.writeFile(
+    lhrHtmlPath, 
+    lhrHtml, 
+    'utf8', 
+    err => { if (err) console.log(err) } 
+  );
+
+
+  console.log(` score: ${lhr.score}`);
+  
+  console.log(' reports: lhr.json, lhr.html');
 
 })()
 .catch(err => console.log(err.message));
