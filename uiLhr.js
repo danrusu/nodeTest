@@ -17,6 +17,13 @@ const { promisify } = require('util');
 const [ readFileAsync, writeFileAsync ] = [ fs.readFile, fs.writeFile ].map(promisify);
 
 
+const path = require('path');
+
+const pathResolver = (relPath) => {
+  return path.resolve(__dirname, relPath);
+};
+
+
 
 async function launchChrome(url, debuggingPort, config={}){
   console.log(` url: ${url}`);
@@ -173,6 +180,7 @@ async function usage(args){
 (async () => {
 
   const configPath = await usage(process.argv);
+
   
   const config = JSON.parse(
     await readFileAsync(
@@ -184,7 +192,7 @@ async function usage(args){
   
   let uiActions;
   if (config.uiActionsScript){
-    uiActions = require(config.uiActionsScript).uiActions;
+    uiActions = require(pathResolver(config.uiActionsScript)).uiActions;
   }
 
   //TODO - read lhrReport params to JSON file
@@ -207,11 +215,11 @@ async function usage(args){
   if (config.lhrPath){
     // save JSON report
     await writeFileAsync(
-      config.lhrPath, 
+      pathResolver(config.lhrPath), 
       JSON.stringify(lhr), 
       'utf8' 
     );
-    console.log(`JSON report: ${config.lhrPath}`);
+    console.log(`JSON report: ${pathResolver(config.lhrPath)}`);
   }
 
 
@@ -219,11 +227,11 @@ async function usage(args){
     // save HTML report
     const lhrHtml = new ReportGenerator().generateReportHtml(lhr);
     await writeFileAsync(
-      config.lhrHtmlPath, 
+      pathResolver(config.lhrHtmlPath), 
       lhrHtml, 
       'utf8' 
     );
-    console.log(`HTML report: ${config.lhrHtmlPath}`);
+    console.log(`HTML report: ${pathResolver(config.lhrHtmlPath)}`);
   }
 
 })()
