@@ -1,10 +1,10 @@
 # Private 
-aoiPOM.js
+*aoi*
+*pmt*
+*lhr*.json
+*lhr*.html
 
-lhr.json
-lhr.html
 .vscode/
-config_local.json
 
 ## end Private
 
