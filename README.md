@@ -28,7 +28,7 @@
 
     node uiLhr.js config.json
 
-#### config.json
+#### config_template.json
     
     e.g.
 
