@@ -34,9 +34,8 @@ async function lhrJsonToHtml(lhrFile, lhrHtmlFile) {
 }
 
 (async () => { 
-  await lhrJsonToHtml(
-    pathResolver(process.argv[2]), 
-    pathResolver(process.argv[3])
+  await lhrJsonToHtml( 
+    ...[ process.argv[2], process.argv[3] ].map(pathResolver)
   )
   .catch(err => console.log(err.message));
 })();
