@@ -33,6 +33,9 @@ async function lhrJsonToHtml(lhrFile, lhrHtmlFile) {
 
 }
 
+
+
+// ***** MAIN
 (async () => { 
   await lhrJsonToHtml( 
     ...[ process.argv[2], process.argv[3] ].map(pathResolver)

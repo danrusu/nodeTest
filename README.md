@@ -26,15 +26,15 @@
 
     npm install
 
-    node uiLhr.js config.json
+    node uiLhr.js config_template.json
 
-#### config_template.json
+#### Demo run configuration - config_template.json
 
     {
       "chromePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
       "debuggingPort": "9222",
-      "url": "https://www.yahoo.com",
-      "uiActionsScript": "yahooPOM.js",
+      "url": "http://danrusu.ro/uiTest/uiTest.html",
+      "uiActionsScript": "danrusu_authenticatePOM.js",
       "lhrPath": "lhr.json",
       "lhrHtmlPath": "lhr.html"
     }
