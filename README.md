@@ -32,10 +32,15 @@
 
     {
       "chromePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+
       "debuggingPort": "9222",
+
       "url": "http://danrusu.ro/uiTest/uiTest.html",
+
       "uiActionsScript": "danrusu_authenticatePOM.js",
+
       "lhrPath": "lhr.json",
+      
       "lhrHtmlPath": "lhr.html"
     }
 
