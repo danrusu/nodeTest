@@ -6,13 +6,13 @@
 
 #### Description
 
-   1. Opens Chrome and navigate to config.url (sets a debugging port for Chrome - config.debuggingPort). 
+    1. Opens Chrome and navigate to config.url (sets a debugging port for Chrome - config.debuggingPort). 
 
-   2. If config.uiActionsScript is set then perform actions described in it via Puppeteer. 
-   The main goal for the ui actions is to automate web apps authentication. 
-   This could change the final url for the lighthouse test.
+    2. If config.uiActionsScript is set then perform actions described in it via Puppeteer. 
+    The main goal for the ui actions is to automate web apps authentication. 
+    This could change the final url for the lighthouse test.
 
-   3. Create lighthouse reports (json/html) for the final url.
+    3. Create lighthouse reports (json/html) for the final url.
 
 #### Usage
 
@@ -44,11 +44,11 @@
 
 #### Helper utility - lhrJsonToHtml.js
 
-   Navigate to some website, open Chrome Dev Tools, run audit and then download the report (lhr.json).
+    Navigate to some website, open Chrome Dev Tools, run audit and then download the report (lhr.json).
 
-   You can get the html report by using:
+    You can get the html report by using:
 
-   node lhrJsonToHtml.js lhr.json, lhr.html
+    node lhrJsonToHtml.js lhr.json, lhr.html
 
 
 #### Dependencies
