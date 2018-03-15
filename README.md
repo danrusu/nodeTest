@@ -4,19 +4,15 @@
 
 ### Based on Chrome Dev Tools Protocol.
 
+#### Description
 
-#### Dependencies
+   1. Opens Chrome and navigate to config.url (sets a debugging port for Chrome - config.debuggingPort). 
 
-    "puppeteer": "^1.1.1"
-    
-    "puppeteer-lighthouse": "^0.1.1"
-    
-    "request": "^2.83.0"
-    
-    "request-promise": "^4.2.2"
-    
-    "socketio": "^1.0.0"
+   2. If config.uiActionsScript is set then perform actions described in it via Puppeteer. 
+   The main goal for the ui actions is to automate web apps authentication. 
+   This could change the final url for the lighthouse test.
 
+   3. Create lighthouse reports (json/html) for the final url.
 
 #### Usage
 
@@ -46,14 +42,23 @@
 
     Note: uiActionsScript, lhrPath, lhrHtmlPath are relative paths.
 
+#### Helper utility - lhrJsonToHtml.js
 
-#### Main steps
+   Navigate to some website, open Chrome Dev Tools, run audit and then download the report (lhr.json).
 
-1. Opens Chrome and navigate to config.url (sets a debugging port for Chrome - config.debuggingPort). 
+   You can get the html report by using:
 
-2. If config.uiActionsScript is set then perform actions described in it via Puppeteer. 
-The main goal for the ui actions is to automate web apps authentication. 
-This could change the final url for the lighthouse test.
+   node lhrJsonToHtml.js lhr.json, lhr.html
 
-3. Create lighthouse reports (json/html) for the final url.
 
+#### Dependencies
+
+    "puppeteer": "^1.1.1"
+    
+    "puppeteer-lighthouse": "^0.1.1"
+    
+    "request": "^2.83.0"
+    
+    "request-promise": "^4.2.2"
+    
+    "socketio": "^1.0.0"
