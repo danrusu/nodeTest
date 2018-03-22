@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const { promisify } = require('util');
 
-const [ readFileAsync, writeFileAsync ] = [ fs.readFile, fs.writeFile ].map(promisify);
+const [readFileAsync, writeFileAsync] = [fs.readFile, fs.writeFile].map(promisify);
 
 const ReportGenerator = require('lighthouse/lighthouse-core/report/v2/report-generator');
 
@@ -25,9 +25,9 @@ async function lhrJsonToHtml(lhrFile, lhrHtmlFile) {
   // save HTML report
   const lhrHtml = new ReportGenerator().generateReportHtml(lhr);
   await writeFileAsync(
-    pathResolver(lhrHtmlFile), 
-    lhrHtml, 
-    'utf8' 
+    pathResolver(lhrHtmlFile),
+    lhrHtml,
+    'utf8'
   );
   console.log(`HTML report: ${pathResolver(lhrHtmlFile)}`);
 
@@ -36,9 +36,9 @@ async function lhrJsonToHtml(lhrFile, lhrHtmlFile) {
 
 
 // ***** MAIN
-(async () => { 
-  await lhrJsonToHtml( 
-    ...[ process.argv[2], process.argv[3] ].map(pathResolver)
+(async () => {
+  await lhrJsonToHtml(
+    ...[process.argv[2], process.argv[3]].map(pathResolver)
   )
-  .catch(err => console.log(err.message));
+    .catch(err => console.log(err.message));
 })();
