@@ -53,7 +53,11 @@
     node lhrJsonToHtml.js lhr.json lhr.html
 
 
-#### Dependencies
+#### Environment
+
+    ##### npm 5.6.0
+
+    ##### node v8.9.4
 
     "puppeteer": "^1.1.1"
     
