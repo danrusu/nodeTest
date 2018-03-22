@@ -55,9 +55,9 @@
 
 #### Environment
 
-    <b>npm 5.6.0</b>
+        npm 5.6.0
 
-    <b>node v8.9.4</b>
+        node v8.9.4
 
     "puppeteer": "^1.1.1"
     
