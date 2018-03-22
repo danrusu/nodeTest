@@ -25,7 +25,7 @@ const waitForPageAction = async (page, pageAction, timeout = 10000) => {
 };
 
 
-const asyncAction = (message, asyncFunction, ...args) => {
+const asyncAction = async (message, asyncFunction, ...args) => {
   console.log(message);
   return await asyncFunction(...args)
     .catch(error => { throw Error(`${message} - error: ${error.message}`); });
