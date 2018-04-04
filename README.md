@@ -58,13 +58,3 @@
     npm 5.6.0
 
     node v8.9.4
-
-    "puppeteer": "^1.1.1"
-    
-    "puppeteer-lighthouse": "^0.1.1"
-    
-    "request": "^2.83.0"
-    
-    "request-promise": "^4.2.2"
-    
-    "socketio": "^1.0.0"
