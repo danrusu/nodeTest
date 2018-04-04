@@ -1,6 +1,6 @@
 # UI Lighthouse Report 
 
-### Npm module for creating Lighthouse reports for web applications.
+### Npm project for creating Lighthouse reports for web applications.
 
 ### Based on Chrome Dev Tools Protocol.
 
