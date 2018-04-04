@@ -26,7 +26,7 @@
 
     node uiLhr.js config_template.json
 
-#### Demo run configuration - config_template.json
+#### Run configuration template - config_template.json
 
     {
       "chromePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
@@ -46,9 +46,9 @@
 
 #### Helper utility - lhrJsonToHtml.js
 
-    Navigate to some website, open Chrome Dev Tools, run audit and then download the report (lhr.json).
+    Mnually navigate to a website, open Chrome Dev Tools, run audit (lat tab top right) and then download the report (lhr.json).
 
-    You can get the html report by using:
+    You can generate the html report by using:
 
     node lhrJsonToHtml.js lhr.json lhr.html
 
