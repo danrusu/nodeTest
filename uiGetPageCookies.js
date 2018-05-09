@@ -1,25 +1,20 @@
 'use strict';
 
 // ##### Dependencies
-const chromeLauncher = require('chrome-launcher');
-
-const puppeteer = require('puppeteer');
-
-const lighthouse = require('lighthouse');
-
-const ReportGenerator = require('lighthouse/lighthouse-core/report/v2/report-generator');
+const chromeLauncher = require('chrome-launcher'),
+  puppeteer = require('puppeteer'),
 
 
-const request = require('request-promise');
+  request = require('request-promise'),
+  fs = require('fs'),
+  { promisify } = require('util'),
 
-const fs = require('fs');
+  [readFileAsync, writeFileAsync] = [fs.readFile, fs.writeFile].map(promisify),
 
-const { promisify } = require('util');
-
-const [readFileAsync, writeFileAsync] = [fs.readFile, fs.writeFile].map(promisify);
+  path = require('path');
 
 
-const path = require('path');
+
 
 const pathResolver = (relPath) => {
   return path.resolve(__dirname, relPath);
@@ -70,7 +65,7 @@ async function getWebSocketDebuggerUrl(debuggingPort) {
 
 
 
-async function lhrReport(
+async function getPageCookies(
   startingUrl,
 
   debuggingPort,
@@ -78,14 +73,16 @@ async function lhrReport(
   chromePath,
 
   uiActions = (browser, page) => {
-    console.log(' uiActions not specified');
+    logger.log(' uiActions not specified');
     return page;
-  }
+  },
+
+  logger
 
 ) {
 
   // 1. Launch Chrome
-  console.log(`1. Start browser`);
+  logger.log(`1. Start browser`);
   const chrome = await launchChrome(
     startingUrl,
     debuggingPort,
@@ -98,7 +95,7 @@ async function lhrReport(
   // 2. Get WebSocket Url for puppeteer browser from
   // http://localhost:9222/json/version    
   const webSocketDebuggerUrl = await getWebSocketDebuggerUrl(chrome.port);
-  console.log(`2. Get webSocketDebuggerUrl: ${webSocketDebuggerUrl}`);
+  logger.log(`2. Get webSocketDebuggerUrl: ${webSocketDebuggerUrl}`);
 
 
   // 3. Launch puppeteer for existing browser (web socket endpoint)
@@ -107,7 +104,7 @@ async function lhrReport(
       browserWSEndpoint: webSocketDebuggerUrl,
     }
   );
-  console.log('3. Connected puppeteer to webSocketDebuggerUrl');
+  logger.log('3. Connected puppeteer to webSocketDebuggerUrl');
 
   // wait for page to have an url
   const page = (await browser.pages())[0];
@@ -120,39 +117,25 @@ async function lhrReport(
       page.waitForNavigation({ urlTimeout, waitUntil: 'networkidle0' })
     ]
 
-  ).catch(error => console.log(
+  ).catch(error => logger.log(
     `waitForNavigation race[load, domcontentloaded, networkidle0] caught: ${error.message}`
   ));
 
 
 
   // 4. Execute UI actions in browser via puppeteer
-  console.log('4. Call uiActions on current page');
+  logger.log('4. Call uiActions on current page');
 
   const currentPage = await uiActions(browser, page);
 
+  const cookies = await currentPage.cookies();
 
-  // 5. Run lighthouse audit on browser debugging port
-  console.log(`5. Run lighthouse audit for ${currentPage.url()}:${chrome.port}`);
-  console.log(' ...');
 
-  const lhr = await lighthouse(
-    currentPage.url(),
-    {
-      port: chrome.port,
-      output: 'json'
-    },
-    null
-  );
-
-  // The gathered artifacts are typically removed as they can be quite large (~50MB+)
-  delete lhr.artifacts;
-
-  await browser.disconnect();
+  //await browser.disconnect();
 
   await chrome.kill();
 
-  return lhr;
+  return cookies;
 };
 
 
@@ -182,8 +165,6 @@ async function usage(args) {
 (async () => {
 
   const configPath = await usage(process.argv);
-
-
   const config = JSON.parse(
     await readFileAsync(
       configPath,
@@ -198,7 +179,7 @@ async function usage(args) {
   }
 
   //TODO - read lhrReport params to JSON file
-  const lhr = await lhrReport(
+  const finalPageCookies = await getPageCookies(
 
     config.url,
 
@@ -206,36 +187,20 @@ async function usage(args) {
 
     config.chromePath,
 
-    uiActions
+    uiActions,
+
+    //console
+    { log: () => { } }
   );
 
 
-  console.log(` score: ${lhr.score}`);
+  console.log(`***Cookies: ${JSON.stringify(finalPageCookies, null, 2)}`);
 
-
-  // REPORTS
-  if (config.lhrPath) {
-    // save JSON report
-    await writeFileAsync(
-      pathResolver(config.lhrPath),
-      JSON.stringify(lhr),
-      'utf8'
-    );
-    console.log(`JSON report: ${pathResolver(config.lhrPath)}`);
-  }
-
-
-  if (config.lhrHtmlPath) {
-    // save HTML report
-    const lhrHtml = new ReportGenerator().generateReportHtml(lhr);
-    await writeFileAsync(
-      pathResolver(config.lhrHtmlPath),
-      lhrHtml,
-      'utf8'
-    );
-    console.log(`HTML report: ${pathResolver(config.lhrHtmlPath)}`);
-  }
+  await writeFileAsync(
+    pathResolver(config.cookiesPath ? config.cookiesPath : "cookies.json"),
+    JSON.stringify(finalPageCookies, null, 2),
+    'utf8'
+  );
 
 })()
   .catch(err => console.log(err.message));
-
